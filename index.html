@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>심플 배치도 생성</title>
+<link href="bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+.selected{
+	border-style: dashed !important;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" id="selectedId">
+	<div class="container-fluid">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">
+						<img alt="심플 배치도 생성" src="">
+					</a>
+				</div>
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col-md-6">
+				<div id="houseArea"></div>
+			</div>
+			<div class="col-md-6">
+				<div>
+					<button type="button" class="btn btn-primary" id="addItem">아이템 추가</button>
+					<h5>태그영역</h5>
+					<div class="row" style="padding: 5px;">
+						<h4 id="itemArea"></h4>
+					</div>
+					<div class="alert alert-info">(아이템 클릭이 안될경우 태크 클릭)</div>
+					<h5>속성영역</h5>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="thumbnail">
+								<div class="caption">
+								<h3 id="itemTitle"></h3>		
+								<a href="#" class="btn btn-warning" id="itemRotation">회전</a>
+								<p>
+								<form>
+									<div class="form-group">
+										<label for="width">가로</label>
+										<input type="text" class="form-control" id="width" value="100">
+										<label for="height">세로</label>
+										<input type="text" class="form-control" id="height" value="100">
+										<label for="border">라인 css</label>
+										<input type="text" class="form-control" id="border" value="2px solid rgb(0, 0, 0)">
+									</div>
+								</form>
+								</p>
+								<p>
+									<a href="#" class="btn btn-default" id="itemSetting">수정 사항 적용</a>
+									<a href="#" class="btn btn-danger" id="itemDelete">삭제</a>
+								</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="jquery-ui.js"></script>
+	<script type="text/javascript" src="bootstrap.min.js"></script>
+	<script type="text/javascript">
+	var idx = 0;
+	$(function(){
+		
+		$('#addItem').click(function(){
+			var title = prompt("아이템명을 입력하세요");
+			var id = idx++ ;
+			
+			$('#itemArea').append(
+					$('<span>',{
+						class: 'label label-default',
+						css: {cursor:'pointer', margin:'2px'},
+						id : "itemId"+id,
+						text : title,
+						'data-num' : id
+					}).draggable().on('click',function(){
+						var id = $(this).data('num');
+						$('#selectedId').val(id);
+						$('#houseArea').find('div').css({'z-index':'1'});
+						$('#houseItem'+id).css({'z-index':'99'});
+						sttings(id);
+					})			
+			);
+			
+			$('#itemTitle').text(title);
+			
+			$('#houseArea').append(
+				$('<div>',{
+					css: {width:'100px',height:'100px',border:'2px solid',cursor:'pointer','z-index':'1', position:'absolute', 'border-color':'#000'},
+					id : "houseItem"+id,
+					html : $('<span class="label label-info">'+title+'</span>'),
+					'data-num' : id,
+					'data-title' : title,
+					'data-css' : {width:'100px',height:'100px',border:'1px solid rgb(0, 0, 0)',cursor:'pointer','z-index':'1', position:'absolute'}
+				}).draggable().on('click',function(){
+					var id = $(this).data('num');
+					$('#selectedId').val(id);
+					sttings(id);
+				})		
+			);
+			
+			$('#selectedId').val(id);
+			sttings(id);
+		});
+		
+		$('#itemSetting').click(function(){
+			var id = $('#selectedId').val();
+			$('#houseItem'+id).css({width:$('#width').val(), height:$('#height').val(), border:$('#border').val()});
+		});
+
+		$('#itemDelete').click(function(){
+			var id = $('#selectedId').val();
+			$('#houseItem'+id).remove();
+			$('#itemId'+id).remove();
+		});
+		
+		$('#itemRotation').click(function(){
+			var id = $('#selectedId').val();
+			var h = $('#height').val();
+			var w = $('#width').val();
+			$('#height').val(w);
+			$('#width').val(h);
+			$('#houseItem'+id).css({width: h, height: w});
+		});
+		
+		function sttings(id){
+			var title = $('#houseItem'+id).data('title');
+			var w = $('#houseItem'+id).css('width');
+			var h = $('#houseItem'+id).css('height');
+			var b = $('#houseItem'+id).css('border');
+			
+			$('#itemTitle').text(title);
+			$('#width').val(w);
+			$('#height').val(h);
+			$('#border').val(b);
+			
+			$('.selected').removeClass('selected');
+			
+			$('#houseItem'+id).addClass('selected');
+		}
+		
+		$('#addItem').click();
+	});
+	</script>
+</body>
+</html>
