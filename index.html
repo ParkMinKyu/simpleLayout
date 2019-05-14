@@ -111,6 +111,9 @@
 		
 		$('#addItem').click(function(){
 			var title = prompt("아이템명을 입력하세요");
+			
+			if(title == null || title == '')return false;
+			
 			var id = idx++ ;
 			
 			$('#itemArea').append(
